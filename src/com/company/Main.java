@@ -1,15 +1,20 @@
 package com.company;
 
-import com.company.scenarios.CustomerScenario;
-import com.company.scenarios.DepartmentScenario;
 import com.company.scenarios.EmployeeScenario;
-import com.company.utils.JdbcConnection;
 
 public class Main {
 
     public static void main(String[] args) {
-        //CustomerScenario.play();
-        EmployeeScenario.play();
-        //DepartmentScenario.play();
+        EmployeeScenario employeeScenario=new EmployeeScenario();
+
+        int sum=0;
+        for(int i=0;i<10;i++) {
+            long startTime = System.currentTimeMillis();
+            employeeScenario.playWithoutIndexes();
+            long stopTime = System.currentTimeMillis();
+            System.out.println(stopTime-startTime);
+            sum+=stopTime-startTime;
+        }
+        System.out.println("Среднее :" + sum/10);
     }
 }

@@ -1,22 +1,17 @@
 package com.company.dao;
+
 import com.company.model.Employee;
+import com.company.model.EmployeeCountName;
 import com.company.utils.JdbcConnection;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class EmployeeDao implements Dao<Employee, Integer> {
 
-    //private static final Logger LOGGER = Logger.getLogger(EmployeeDao.class.getName());
     private final Optional<Connection> connection;
 
     public EmployeeDao() {
@@ -39,13 +34,10 @@ public class EmployeeDao implements Dao<Employee, Integer> {
                     double doplata = resultSet.getDouble("doplata");
 
                     employee = Optional.of(new Employee(id, familiya, imya, otchestvo, doplata));
-
-                    //LOGGER.log(Level.INFO, "Found {0} in database", employee.get());
                 }
             } catch (SQLException ex) {
-                //LOGGER.log(Level.SEVERE, null, ex);
+                System.out.println(ex);
             }
-
             return employee;
         });
     }
@@ -69,15 +61,12 @@ public class EmployeeDao implements Dao<Employee, Integer> {
                     Employee employee = new Employee(id, familiya, imya, otchestvo, doplata);
 
                     employees.add(employee);
-
-                    //LOGGER.log(Level.INFO, "Found {0} in database", employee);
                 }
 
             } catch (SQLException ex) {
-                //LOGGER.log(Level.SEVERE, null, ex);
+                System.out.println(ex);
             }
         });
-
         return employees;
     }
 
@@ -112,12 +101,9 @@ public class EmployeeDao implements Dao<Employee, Integer> {
                 }
 
                 nonNullEmployee.setId(generatedId.get());
-                //LOGGER.log(Level.INFO, "{0} created successfully? {1}",
-                        //new Object[]{nonNullEmployee, numberOfInsertedRows > 0});
             } catch (SQLException ex) {
-                //LOGGER.log(Level.SEVERE, null, ex);
+                System.out.println(ex);
             }
-
             return generatedId;
         });
     }
@@ -144,13 +130,10 @@ public class EmployeeDao implements Dao<Employee, Integer> {
                 statement.setDouble(4, nonNullEmployee.getDoplata());
                 statement.setInt(5, nonNullEmployee.getId());
 
-                int numberOfUpdatedRows = statement.executeUpdate();
-
-                //LOGGER.log(Level.INFO, "Was the employee updated successfully? {0}",
-                        //numberOfUpdatedRows > 0);
+                statement.executeUpdate();
 
             } catch (SQLException ex) {
-                //LOGGER.log(Level.SEVERE, null, ex);
+                System.out.println(ex);
             }
         });
     }
@@ -166,13 +149,84 @@ public class EmployeeDao implements Dao<Employee, Integer> {
 
                 statement.setInt(1, nonNullEmployee.getId());
 
-                int numberOfDeletedRows = statement.executeUpdate();
-
-                //LOGGER.log(Level.INFO, "Was the employee deleted successfully? {0}",
-                        //numberOfDeletedRows > 0);
+                statement.executeUpdate();
 
             } catch (SQLException ex) {
-                //LOGGER.log(Level.SEVERE, null, ex);
+                System.out.println(ex);
+            }
+        });
+    }
+    public Collection<Employee> getByName(String name) {
+        Collection<Employee> employees = new ArrayList<>();
+        String sql = "SELECT * FROM employee WHERE imya = ?" + name;
+
+        connection.ifPresent(conn -> {
+            try (PreparedStatement statement = conn.prepareStatement(sql)) {
+                statement.setString(1, name);
+                ResultSet resultSet = statement.executeQuery();
+                while (resultSet.next()) {
+                    int id = resultSet.getInt("id");
+                    String familiya = resultSet.getString("familiya");
+                    String imya = resultSet.getString("imya");
+                    String otchestvo = resultSet.getString("otchestvo");
+                    double doplata = resultSet.getDouble("doplata");
+
+                    Employee employee = new Employee(id, familiya, imya, otchestvo, doplata);
+                    employees.add(employee);
+                }
+
+            } catch (SQLException ex) {
+                System.out.println(ex);
+            }
+        });
+        return employees;
+    }
+
+    public Collection<EmployeeCountName> getEmployeesGroupedByNames() {
+        Collection<EmployeeCountName> employees = new ArrayList<>();
+        String sql = "SELECT COUNT(id), imya\n" +
+                "FROM Employee\n" +
+                "GROUP BY imya";
+
+        connection.ifPresent(conn -> {
+            try (Statement statement = conn.createStatement();
+                 ResultSet resultSet = statement.executeQuery(sql)) {
+
+                while (resultSet.next()) {
+                    int count = resultSet.getInt("count");
+                    String imya = resultSet.getString("imya");
+
+                    EmployeeCountName employee = new EmployeeCountName(count,imya);
+
+                    employees.add(employee);
+                }
+
+            } catch (SQLException ex) {
+                System.out.println(ex);
+            }
+        });
+        return employees;
+    }
+    public void createIndexesOnEmployee() {
+        String sql = "create index index_fio on employee(imya);";
+
+        connection.ifPresent(conn -> {
+            try (Statement statement = conn.createStatement();
+                 ResultSet resultSet = statement.executeQuery(sql)) {
+            } catch (SQLException ex) {
+                //System.out.println(ex);
+            }
+        });
+    }
+    public void dropIndexesOnEmployee() {
+        String sql = "drop index index_fio;";
+
+        connection.ifPresent(conn -> {
+            try (Statement statement = conn.createStatement();
+                 ResultSet resultSet = statement.executeQuery(sql)) {
+                //System.out.println(resultSet);
+            } catch (SQLException ex) {
+                //System.out.println(ex);
             }
         });
     }
