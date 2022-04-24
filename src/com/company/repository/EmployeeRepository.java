@@ -41,6 +41,7 @@ public class EmployeeRepository {
     public Collection<Employee> getEmployeesByName(String name){
         return employeeDao.getByName(name);
     }
+    public Collection<Employee> getAllSortedByName(){return employeeDao.getAllSortedByName();}
     public void createIndex(){
         employeeDao.createIndexesOnEmployee();
     }

@@ -8,7 +8,7 @@ public class Employee {
     private double doplata;
 
     public Employee(String familiya, String imya, String otchestvo, double doplata) {
-        this(null, imya, familiya, otchestvo, doplata);
+        this(null, familiya, imya, otchestvo, doplata);
     }
 
     public Employee(Integer id, String familiya, String imya, String otchestvo, double doplata) {
@@ -61,9 +61,8 @@ public class Employee {
 
     @Override
     public String toString() {
-        return "Employee{" +
-                "id=" + id +
-                ", familiya='" + familiya + '\'' +
+        return "Сотрудник{" +
+                "familiya='" + familiya + '\'' +
                 ", imya='" + imya + '\'' +
                 ", otchestvo='" + otchestvo + '\'' +
                 ", doplata=" + doplata +

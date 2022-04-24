@@ -116,10 +116,10 @@ public class EmployeeDao implements Dao<Employee, Integer> {
                 + "SET "
                 + "familiya = ?, "
                 + "imya = ?, "
-                + "otchestvo = ? "
+                + "otchestvo = ?, "
                 + "doplata = ? "
                 + "WHERE "
-                + "employee_id = ?";
+                + "id = ?;";
 
         connection.ifPresent(conn -> {
             try (PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -131,7 +131,6 @@ public class EmployeeDao implements Dao<Employee, Integer> {
                 statement.setInt(5, nonNullEmployee.getId());
 
                 statement.executeUpdate();
-
             } catch (SQLException ex) {
                 System.out.println(ex);
             }
@@ -158,7 +157,7 @@ public class EmployeeDao implements Dao<Employee, Integer> {
     }
     public Collection<Employee> getByName(String name) {
         Collection<Employee> employees = new ArrayList<>();
-        String sql = "SELECT * FROM employee WHERE imya = ?" + name;
+        String sql = "SELECT * FROM employee WHERE imya = ?";
 
         connection.ifPresent(conn -> {
             try (PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -186,7 +185,7 @@ public class EmployeeDao implements Dao<Employee, Integer> {
         Collection<EmployeeCountName> employees = new ArrayList<>();
         String sql = "SELECT COUNT(id), imya\n" +
                 "FROM Employee\n" +
-                "GROUP BY imya";
+                "GROUP BY imya;";
 
         connection.ifPresent(conn -> {
             try (Statement statement = conn.createStatement();
@@ -207,8 +206,34 @@ public class EmployeeDao implements Dao<Employee, Integer> {
         });
         return employees;
     }
+    public Collection<Employee> getAllSortedByName() {
+        Collection<Employee> employees = new ArrayList<>();
+        String sql = "SELECT * FROM employee ORDER BY imya ASC;";
+
+        connection.ifPresent(conn -> {
+            try (Statement statement = conn.createStatement();
+                 ResultSet resultSet = statement.executeQuery(sql)) {
+
+                while (resultSet.next()) {
+                    int id = resultSet.getInt("id");
+                    String familiya = resultSet.getString("familiya");
+                    String imya = resultSet.getString("imya");
+                    String otchestvo = resultSet.getString("otchestvo");
+                    double doplata = resultSet.getDouble("doplata");
+
+                    Employee employee = new Employee(id, familiya, imya, otchestvo, doplata);
+
+                    employees.add(employee);
+                }
+
+            } catch (SQLException ex) {
+                System.out.println(ex);
+            }
+        });
+        return employees;
+    }
     public void createIndexesOnEmployee() {
-        String sql = "create index index_fio on employee(imya);";
+        String sql = "create index index_fio on employee USING hash(imya);";
 
         connection.ifPresent(conn -> {
             try (Statement statement = conn.createStatement();
