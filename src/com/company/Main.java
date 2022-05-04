@@ -4,12 +4,12 @@ import com.company.model.Employee;
 import com.company.repository.EmployeeRepository;
 import com.company.scenarios.EmployeeScenario;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
 
     public static void main(String[] args) {
-        var employeeScenario=new EmployeeScenario();
             sc();
         }
     public static void sc(){
@@ -42,15 +42,34 @@ public class Main {
                     if(!repo.getEmployeesByName(imya).isEmpty())
                         for(var employee:repo.getEmployeesByName(imya)){
                             if(employee.getFamiliya().equals(familiya) && employee.getOtchestvo().equals(otchestvo)) {
-                                System.out.println("Введите фио отдельно и доплату измененного сотрудника");
-                                familiya = sc.next();
-                                imya = sc.next();
-                                otchestvo = sc.next();
-                                doplata = sc.nextDouble();
-                                employee.setImya(imya);
-                                employee.setFamiliya(familiya);
-                                employee.setOtchestvo(otchestvo);
-                                employee.setDoplata(doplata);
+                                System.out.println("Введите число изменяемых параметров");
+                                var n=sc.nextInt();
+                                System.out.println("Введите номера изменяемых параметров");
+                                var list = new ArrayList<Integer>();
+                                for(int i=0;i<n;i++) {
+                                    list.add(sc.nextInt());
+                                }
+                                System.out.println("Введите");
+                                if(list.contains(1)) {
+                                    System.out.print("Фамилию: ");
+                                    familiya = sc.next();
+                                    employee.setFamiliya(familiya);
+                                }
+                                if(list.contains(2)) {
+                                    System.out.print("Имя: ");
+                                    imya = sc.next();
+                                    employee.setImya(imya);
+                                }
+                                if(list.contains(3)) {
+                                    System.out.print("Отчество: ");
+                                    otchestvo = sc.next();
+                                    employee.setOtchestvo(otchestvo);
+                                }
+                                if(list.contains(4)) {
+                                    System.out.print("Доплату: ");
+                                    doplata = sc.nextDouble();
+                                    employee.setDoplata(doplata);
+                                }
                                 repo.updateEmployee(employee);
                                 break;
                             }
