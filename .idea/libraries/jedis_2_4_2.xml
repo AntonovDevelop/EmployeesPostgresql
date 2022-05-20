@@ -1,7 +1,7 @@
 <component name="libraryTable">
-  <library name="postgresql-42.3.3">
+  <library name="jedis-2.4.2">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/postgresql-42.3.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/jedis-2.4.2.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
