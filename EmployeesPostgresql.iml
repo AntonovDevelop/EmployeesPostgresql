@@ -7,6 +7,10 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="mongo-java-driver-3.12.10" level="project" />
     <orderEntry type="library" name="postgresql-42.3.3" level="project" />
+    <orderEntry type="library" name="mongo-java-driver-3.12.10" level="project" />
+    <orderEntry type="library" name="commons-pool2-2.0" level="project" />
+    <orderEntry type="library" name="jedis-2.4.2" level="project" />
   </component>
 </module>
