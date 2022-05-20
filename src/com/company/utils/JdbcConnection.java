@@ -13,7 +13,7 @@ public class JdbcConnection {
 
     public static Optional getConnection() {
         if (connection.isEmpty()) {
-            String url = "jdbc:postgresql://localhost:5432/postgres";
+            String url = "jdbc:postgresql://localhost:5432/testdb";
             String user = "postgres";
             String password = "postgres";
 
